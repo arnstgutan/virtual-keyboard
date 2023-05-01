@@ -603,6 +603,9 @@ const KEY_CLASS = [
 
 const CURRENT_LAYOUT = {
   capsOn: false,
+  language: localStorage.getItem("current_language")
+    ? localStorage.getItem("current_language")
+    : "ENG",
 };
 
 function showKeyboard() {
@@ -612,6 +615,7 @@ function showKeyboard() {
   CENTRALIZER.classList.add("centralizer");
   BODY.appendChild(CENTRALIZER);
   const TITLE = document.createElement("h1");
+  TITLE.innerHTML = "virtual keyboard";
   TITLE.classList.add("title");
   CENTRALIZER.appendChild(TITLE);
   const TEXT_INPUT = document.createElement("textarea");
@@ -639,6 +643,11 @@ function showKeyboard() {
       </div>`;
     KEYBOARD.insertAdjacentHTML("beforeend", KEY);
   }
+
+  const ABOUT = document.createElement("div");
+  ABOUT.classList.add("description");
+  CENTRALIZER.appendChild(ABOUT);
+  ABOUT.innerHTML = "Для переключения языка комбинация: левыe ctrl + alt";
 }
 
 window.onload = () => {
