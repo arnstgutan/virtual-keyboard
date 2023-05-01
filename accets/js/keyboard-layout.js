@@ -608,6 +608,34 @@ const CURRENT_LAYOUT = {
     : "ENG",
 };
 
+function changeLanguage() {
+  let language = CURRENT_LAYOUT.language;
+  let keys = document.querySelectorAll(".key");
+  if (language === "ENG") {
+    keys.forEach((key) => {
+      key.querySelector(".eng").classList.add("hidden");
+      key.querySelector(".rus").classList.remove("hidden");
+    });
+    CURRENT_LAYOUT.language = "RUS";
+    localStorage.setItem("current_language", CURRENT_LAYOUT.language);
+  } else {
+    keys.forEach((key) => {
+      key.querySelector(".rus").classList.add("hidden");
+      key.querySelector(".eng").classList.remove("hidden");
+    });
+    CURRENT_LAYOUT.language = "ENG";
+    localStorage.setItem("current_language", CURRENT_LAYOUT.language);
+  }
+}
+
+function showCurrentClicked(event) {
+  event.classList.add("active");
+}
+
+function hideCurrentClicked(event) {
+  event.classList.remove("active");
+}
+
 function showKeyboard() {
   const BODY = document.querySelector("body");
   BODY.classList.add("body");
@@ -649,6 +677,23 @@ function showKeyboard() {
   CENTRALIZER.appendChild(ABOUT);
   ABOUT.innerHTML = "Для переключения языка комбинация: левыe ctrl + alt";
 }
+
+function onMouseDown(event) {
+  event.preventDefault();
+  const CURRENT_KEY = event.target.closest(".key").classList[1];
+  showCurrentClicked(event.target.closest(".key"));
+  console.log(CURRENT_KEY);
+  if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
+  }
+}
+
+function onMouseUp(event) {
+  event.preventDefault();
+  hideCurrentClicked(event.target.closest(".key"));
+}
+
+document.addEventListener("mousedown", (event) => onMouseDown(event));
+document.addEventListener("mouseup", (event) => onMouseUp(event));
 
 window.onload = () => {
   showKeyboard();
