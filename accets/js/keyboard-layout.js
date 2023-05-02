@@ -657,16 +657,16 @@ function showKeyboard() {
     const KEY = `
       <div class="key ${KEY_CLASS[i]}">
         <span class="rus hidden">
-          <span class="caseDown hidden">${RUS_BASE[i]}</span>
-          <span class="caseUp hidden">${RUS_SHIFT[i]}</span>
-          <span class="caps hidden">${RUS_CAPS[i]}</span>
-          <span class="shiftCaps hidden">${RUS_CAPS_SHIFT[i]}</span>
+          <span class="classChanger caseDown hidden">${RUS_BASE[i]}</span>
+          <span class="classChanger caseUp hidden">${RUS_SHIFT[i]}</span>
+          <span class="classChanger caps hidden">${RUS_CAPS[i]}</span>
+          <span class="classChanger shiftCaps hidden">${RUS_CAPS_SHIFT[i]}</span>
         </span>
         <span class="eng">
-          <span class="caseDown">${ENG_BASE[i]}</span>
-          <span class="caseUp hidden">${ENG_SHIFT[i]}</span>
-          <span class="caps hidden">${ENG_CAPS[i]}</span>
-          <span class="shiftCaps hidden">${ENG_CAPS_SHIFT[i]}</span>
+          <span class="classChanger caseDown">${ENG_BASE[i]}</span>
+          <span class="classChanger caseUp hidden">${ENG_SHIFT[i]}</span>
+          <span class="classChanger caps hidden">${ENG_CAPS[i]}</span>
+          <span class="classChanger shiftCaps hidden">${ENG_CAPS_SHIFT[i]}</span>
         </span>
       </div>`;
     KEYBOARD.insertAdjacentHTML("beforeend", KEY);
@@ -678,18 +678,41 @@ function showKeyboard() {
   ABOUT.innerHTML = "Для переключения языка комбинация: левыe ctrl + alt";
 }
 
+function changeLayout(targetclass) {
+  const ARRAY_OF_KEYS = document.querySelectorAll(".classChanger");
+  ARRAY_OF_KEYS.forEach((span) => {
+    if (span.classList.contains(targetclass)) {
+      span.classList.remove("hidden");
+    } else {
+      span.classList.add("hidden");
+    }
+  });
+  /*   console.log(ARRAY_OF_KEYS); */
+}
+
 function onMouseDown(event) {
   event.preventDefault();
+  const CURR_TARGET = event.target;
   const CURRENT_KEY = event.target.closest(".key").classList[1];
   showCurrentClicked(event.target.closest(".key"));
   console.log(CURRENT_KEY);
   if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
+    changeLayout("caseUp");
+  }
+  if (CURRENT_KEY === "CapsLock") {
+    CURR_TARGET.classList.contains("caps")
+      ? changeLayout("caseDown")
+      : changeLayout("caps");
   }
 }
 
 function onMouseUp(event) {
   event.preventDefault();
+  const CURRENT_KEY = event.target.closest(".key").classList[1];
   hideCurrentClicked(event.target.closest(".key"));
+  if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
+    changeLayout("caseDown");
+  }
 }
 
 document.addEventListener("mousedown", (event) => onMouseDown(event));
