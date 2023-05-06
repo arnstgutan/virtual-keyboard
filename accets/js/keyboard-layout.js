@@ -606,6 +606,7 @@ const CURRENT_LAYOUT = {
   language: localStorage.getItem("current_language")
     ? localStorage.getItem("current_language")
     : "ENG",
+  state: "caseDown",
 };
 
 function changeLanguage() {
@@ -679,6 +680,7 @@ function showKeyboard() {
 }
 
 function changeLayout(targetclass) {
+  CURRENT_LAYOUT.state = targetclass;
   const ARRAY_OF_KEYS = document.querySelectorAll(".classChanger");
   ARRAY_OF_KEYS.forEach((span) => {
     if (span.classList.contains(targetclass)) {
@@ -687,7 +689,6 @@ function changeLayout(targetclass) {
       span.classList.add("hidden");
     }
   });
-  /*   console.log(ARRAY_OF_KEYS); */
 }
 
 function onMouseDown(event) {
@@ -696,13 +697,32 @@ function onMouseDown(event) {
   const CURRENT_KEY = event.target.closest(".key").classList[1];
   showCurrentClicked(event.target.closest(".key"));
   console.log(CURRENT_KEY);
-  if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
+  const ALT_KEY = document.querySelector(".AltLeft");
+  const CTRL_KEY = document.querySelector(".ControlLeft");
+  if (
+    (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") &&
+    CURRENT_LAYOUT.state === "caps"
+  ) {
+    changeLayout("shiftCaps");
+  } else if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
     changeLayout("caseUp");
   }
   if (CURRENT_KEY === "CapsLock") {
-    CURR_TARGET.classList.contains("caps")
-      ? changeLayout("caseDown")
-      : changeLayout("caps");
+    if (CURR_TARGET.classList.contains("caps")) {
+      changeLayout("caseDown");
+      CURRENT_LAYOUT.capsOn = false;
+    } else {
+      changeLayout("caps");
+      CURRENT_LAYOUT.capsOn = true;
+    }
+  }
+  console.log(CTRL_KEY);
+  if (
+    (CURRENT_KEY === "AltLeft" && CTRL_KEY.classList.contains("active")) ||
+    (CURRENT_KEY === "ControlLeft" && ALT_KEY.classList.contains("active"))
+  ) {
+    changeLanguage();
+    changeLayout(CURRENT_LAYOUT.state);
   }
 }
 
@@ -711,7 +731,11 @@ function onMouseUp(event) {
   const CURRENT_KEY = event.target.closest(".key").classList[1];
   hideCurrentClicked(event.target.closest(".key"));
   if (CURRENT_KEY === "ShiftRight" || CURRENT_KEY === "ShiftLeft") {
-    changeLayout("caseDown");
+    if (CURRENT_LAYOUT.capsOn === false) {
+      changeLayout("caseDown");
+    } else {
+      changeLayout("caps");
+    }
   }
 }
 
